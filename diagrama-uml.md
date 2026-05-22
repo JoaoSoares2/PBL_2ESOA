@@ -7,6 +7,10 @@ classDiagram
         -String senha
         -String cpf
         -String telefone
+        -Autenticacao autenticacao
+        -PerfilInvestidor perfilInvestidor
+        -List~Relatorio~ relatorios
+        -List~Empresa~ empresas
         +cadastrar()
         +autenticar(String email, String senha) boolean
         +atualizarCadastro(String nome, String email, String telefone)
@@ -18,6 +22,7 @@ classDiagram
         -Long id
         -String login
         -String senha
+        -AutenticacaoMultifator autenticacaoMultifator
         +validarCredenciais(String login, String senha) boolean
         +encerrarSessao()
     }
@@ -65,6 +70,7 @@ classDiagram
         -Long id
         -String nome
         -String cnpj
+        -List~Carteira~ carteiras
         +cadastrarEmpresa()
         +atualizarEmpresa(String nome)
         +atualizarEmpresa(String nome, String cnpj)
@@ -77,6 +83,8 @@ classDiagram
         -String nome
         -Double saldoTotal
         -Date dataCriacao
+        -List~Ativo~ ativos
+        -List~Transacao~ transacoes
         +adicionarAtivo(Ativo ativo)
         +adicionarAtivo(String nome, Double valor, Double quantidade)
         +removerAtivo(Ativo ativo)
@@ -114,6 +122,7 @@ classDiagram
         -Double valor
         -Date data
         -String descricao
+        -Ativo ativo
         +registrarCompra(Double valor) Transacao
         +registrarCompra(Double valor, String descricao) Transacao
         +registrarCompra(Ativo ativo) Transacao
