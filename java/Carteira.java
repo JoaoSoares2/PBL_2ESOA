@@ -9,9 +9,8 @@ public class Carteira {
     private Double saldoTotal;
     private Date dataCriacao;
 
-    // Relacionamentos
-    private List<Ativo> ativos;           // 0..*
-    private List<Transacao> transacoes;   // 0..*
+    private List<Ativo> ativos;
+    private List<Transacao> transacoes;
 
     public Carteira() {
         this.ativos = new ArrayList<>();
@@ -25,9 +24,31 @@ public class Carteira {
         this.nome = nome;
     }
 
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+
+    public Double getSaldoTotal() { return saldoTotal; }
+    public void setSaldoTotal(Double saldoTotal) { this.saldoTotal = saldoTotal; }
+
+    public Date getDataCriacao() { return dataCriacao; }
+    public void setDataCriacao(Date dataCriacao) { this.dataCriacao = dataCriacao; }
+
+    public List<Ativo> getAtivos() { return ativos; }
+    public void setAtivos(List<Ativo> ativos) { this.ativos = ativos; }
+
+    public List<Transacao> getTransacoes() { return transacoes; }
+    public void setTransacoes(List<Transacao> transacoes) { this.transacoes = transacoes; }
+
     public void adicionarAtivo(Ativo ativo) {
         this.ativos.add(ativo);
         calcularSaldo();
+    }
+
+    public void adicionarAtivo(String nome, Double valor, Double quantidade) {
+        adicionarAtivo(new AtivoRendaVariavel(nome, valor, quantidade, nome));
     }
 
     public void removerAtivo(Ativo ativo) {
@@ -35,11 +56,15 @@ public class Carteira {
         calcularSaldo();
     }
 
+    public void removerAtivo(String nomeAtivo) {
+        this.ativos.removeIf(a -> a.getNome().equalsIgnoreCase(nomeAtivo));
+        calcularSaldo();
+    }
+
     public Double calcularSaldo() {
         this.saldoTotal = ativos.stream()
                 .mapToDouble(Ativo::calcularValorTotal)
                 .sum();
-
         return this.saldoTotal;
     }
 
@@ -49,5 +74,11 @@ public class Carteira {
 
     public void registrarTransacao(Transacao transacao) {
         this.transacoes.add(transacao);
+    }
+
+    @Override
+    public String toString() {
+        return "Carteira{nome='" + nome + "', saldo=R$" + String.format("%.2f", saldoTotal)
+                + ", ativos=" + ativos.size() + "}";
     }
 }
