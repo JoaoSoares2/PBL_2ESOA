@@ -13,6 +13,18 @@ public class PerfilInvestidor {
         this.nivelRisco = nivelRisco;
     }
 
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getNomePerfil() { return nomePerfil; }
+    public void setNomePerfil(String nomePerfil) { this.nomePerfil = nomePerfil; }
+
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
+
+    public String getNivelRisco() { return nivelRisco; }
+    public void setNivelRisco(String nivelRisco) { this.nivelRisco = nivelRisco; }
+
     public void exibirPerfil() {
         System.out.println("Perfil: " + nomePerfil);
         System.out.println("Nível de Risco: " + nivelRisco);
@@ -20,12 +32,16 @@ public class PerfilInvestidor {
     }
 
     public String avaliarRisco() {
-        // Regra de negócio: retorna uma recomendação baseada no nível de risco
         return switch (nivelRisco.toUpperCase()) {
-            case "ALTO"   -> "Perfil agressivo";
-            case "MEDIO"  -> "Perfil moderado";
-            case "BAIXO"  -> "Perfil conservador";
-            default       -> "Nível de risco não reconhecido.";
+            case "ALTO"  -> "Perfil agressivo: alta exposição a risco para maior rentabilidade.";
+            case "MEDIO" -> "Perfil moderado: equilíbrio entre segurança e rentabilidade.";
+            case "BAIXO" -> "Perfil conservador: prioridade à segurança do capital.";
+            default      -> "Nível de risco não reconhecido.";
         };
+    }
+
+    @Override
+    public String toString() {
+        return "PerfilInvestidor{perfil='" + nomePerfil + "', risco='" + nivelRisco + "'}";
     }
 }

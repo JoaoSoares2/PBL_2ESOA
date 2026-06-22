@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 public class Usuario {
@@ -9,13 +10,15 @@ public class Usuario {
     private String cpf;
     private String telefone;
 
-    // Relacionamentos
-    private Autenticacao autenticacao;          // 1--1
-    private PerfilInvestidor perfilInvestidor;  // 1--1
-    private List<Relatorio> relatorios;         // 1--0..*
-    private List<Empresa> empresas;             // 1--0..*
+    private Autenticacao autenticacao;
+    private PerfilInvestidor perfilInvestidor;
+    private List<Relatorio> relatorios;
+    private List<Empresa> empresas;
 
-    public Usuario() {}
+    public Usuario() {
+        this.relatorios = new ArrayList<>();
+        this.empresas = new ArrayList<>();
+    }
 
     public Usuario(String nome, String email, String senha, String cpf, String telefone) {
         this.nome = nome;
@@ -23,11 +26,41 @@ public class Usuario {
         this.senha = senha;
         this.cpf = cpf;
         this.telefone = telefone;
+        this.relatorios = new ArrayList<>();
+        this.empresas = new ArrayList<>();
     }
 
-    public void cadastrar() {
-        // Lógica de cadastro de usuário
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getSenha() { return senha; }
+    public void setSenha(String senha) { this.senha = senha; }
+
+    public String getCpf() { return cpf; }
+    public void setCpf(String cpf) { this.cpf = cpf; }
+
+    public String getTelefone() { return telefone; }
+    public void setTelefone(String telefone) { this.telefone = telefone; }
+
+    public Autenticacao getAutenticacao() { return autenticacao; }
+    public void setAutenticacao(Autenticacao autenticacao) { this.autenticacao = autenticacao; }
+
+    public PerfilInvestidor getPerfilInvestidor() { return perfilInvestidor; }
+    public void setPerfilInvestidor(PerfilInvestidor perfilInvestidor) { this.perfilInvestidor = perfilInvestidor; }
+
+    public List<Relatorio> getRelatorios() { return relatorios; }
+    public void setRelatorios(List<Relatorio> relatorios) { this.relatorios = relatorios; }
+
+    public List<Empresa> getEmpresas() { return empresas; }
+    public void setEmpresas(List<Empresa> empresas) { this.empresas = empresas; }
+
+    public void cadastrar() {}
 
     public boolean autenticar(String email, String senha) {
         if (this.autenticacao != null) {
@@ -50,5 +83,10 @@ public class Usuario {
 
     public List<Relatorio> consultarRelatorios() {
         return this.relatorios;
+    }
+
+    @Override
+    public String toString() {
+        return "Usuario{nome='" + nome + "', email='" + email + "', cpf='" + cpf + "'}";
     }
 }
