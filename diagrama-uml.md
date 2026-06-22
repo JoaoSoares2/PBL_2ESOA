@@ -9,11 +9,10 @@ classDiagram
         -String telefone
         -Autenticacao autenticacao FK
         -PerfilInvestidor perfilInvestidor FK
-        -List~Relatorio~ relatorios FK
-        -List~Empresa~ empresas FK
         +cadastrar()
         +autenticar(String email, String senha) boolean
         +atualizarCadastro(String nome, String email, String telefone)
+        +vincularEmpresa(Empresa empresa, String cargo)
         +vizualizarCarteira() List~Carteira~
         +consultarRelatorios() List~Relatorio~
     }
@@ -44,6 +43,89 @@ classDiagram
         +avaliarRisco() String
     }
 
+    class Empresa {
+        -Long id PK
+        -String nome
+        -String cnpj
+        +cadastrarEmpresa()
+        +atualizarEmpresa(String nome)
+        +atualizarEmpresa(String nome, String cnpj)
+        +listarCarteiras() List~Carteira~
+        +adicionarCarteira(Carteira carteira)
+    }
+
+    class UsuarioEmpresa {
+        -Long id PK
+        -Usuario usuario FK
+        -Empresa empresa FK
+        -String cargo
+        -Date dataVinculo
+    }
+
+    class Carteira {
+        -Long id PK
+        -String nome
+        -Double saldoTotal
+        -Date dataCriacao
+        +adicionarAtivo(Ativo ativo, Double quantidade, Double precoMedio)
+        +adicionarAtivo(Ativo ativo)
+        +removerAtivo(Ativo ativo)
+        +removerAtivo(String nome)
+        +calcularSaldo() Double
+        +listarTransacoes() List~Transacao~
+        +registrarTransacao(Transacao transacao)
+    }
+
+    class CarteiraAtivo {
+        -Long id PK
+        -Carteira carteira FK
+        -Ativo ativo FK
+        -Double quantidade
+        -Double precoMedio
+        +calcularValorAtual() Double
+        +calcularLucro() Double
+    }
+
+    class Ativo {
+        <<abstract>>
+        -Long id PK
+        -String nome
+        -Double valorAtual
+        -Double quantidade
+        +atualizarCotacao(Double novoValor)
+        +atualizarCotacao(Double variacao, boolean percentual)
+        +calcularValorTotal() Double
+    }
+
+    class Acao {
+        -String ticker
+        -String bolsa
+        -Double variacaoDiaria
+        +calcularValorTotal() Double
+    }
+
+    class FundoInvestimento {
+        -Double taxaAdministracao
+        -String tipoFundo
+        +calcularValorTotal() Double
+    }
+
+    class Transacao {
+        -Long id PK
+        -String tipo
+        -Double valor
+        -Date data
+        -String descricao
+        -Ativo ativo FK
+        +registrarCompra(Double valor) Transacao
+        +registrarCompra(Double valor, String descricao) Transacao
+        +registrarCompra(Ativo ativo) Transacao
+        +registrarVenda(Double valor) Transacao
+        +registrarVenda(Double valor, String descricao) Transacao
+        +registrarVenda(Ativo ativo) Transacao
+        +consultarTransacoes(List~Transacao~ transacoes)
+    }
+
     class Relatorio {
         <<abstract>>
         -Long id PK
@@ -66,75 +148,9 @@ classDiagram
         +gerarRelatorio()
     }
 
-    class Empresa {
-        -Long id PK
-        -String nome
-        -String cnpj
-        -List~Carteira~ carteiras FK
-        +cadastrarEmpresa()
-        +atualizarEmpresa(String nome)
-        +atualizarEmpresa(String nome, String cnpj)
-        +listarCarteiras() List~Carteira~
-        +adicionarCarteira(Carteira carteira)
-    }
-
-    class Carteira {
-        -Long id PK
-        -String nome
-        -Double saldoTotal
-        -Date dataCriacao
-        -List~Ativo~ ativos FK
-        -List~Transacao~ transacoes FK
-        +adicionarAtivo(Ativo ativo)
-        +adicionarAtivo(String nome, Double valor, Double quantidade)
-        +removerAtivo(Ativo ativo)
-        +removerAtivo(String nome)
-        +calcularSaldo() Double
-        +listarTransacoes() List~Transacao~
-        +registrarTransacao(Transacao transacao)
-    }
-
-    class Ativo {
-        <<abstract>>
-        -Long id PK
-        -String nome
-        -Double valorAtual
-        -Double quantidade
-        +atualizarCotacao(Double novoValor)
-        +atualizarCotacao(Double variacao, boolean percentual)
-        +calcularValorTotal() Double
-    }
-
-    class AtivoRendaFixa {
-        -Double taxaJurosAnual
-        +calcularValorTotal() Double
-    }
-
-    class AtivoRendaVariavel {
-        -String ticker
-        -Double variacaoDiaria
-        +calcularValorTotal() Double
-    }
-
-    class Transacao {
-        -Long id PK
-        -String tipo
-        -Double valor
-        -Date data
-        -String descricao
-        -Ativo ativo FK
-        +registrarCompra(Double valor) Transacao
-        +registrarCompra(Double valor, String descricao) Transacao
-        +registrarCompra(Ativo ativo) Transacao
-        +registrarVenda(Double valor) Transacao
-        +registrarVenda(Double valor, String descricao) Transacao
-        +registrarVenda(Ativo ativo) Transacao
-        +consultarTransacoes(List~Transacao~ transacoes)
-    }
-
     %% Herança
-    AtivoRendaFixa --|> Ativo
-    AtivoRendaVariavel --|> Ativo
+    Acao --|> Ativo
+    FundoInvestimento --|> Ativo
     RelatorioAnual --|> Relatorio
     RelatorioMensal --|> Relatorio
 
@@ -143,9 +159,11 @@ classDiagram
     Autenticacao "1" -- "1" AutenticacaoMultifator : utiliza
     Usuario "1" -- "1" PerfilInvestidor : define
     Usuario "1" -- "0..*" Relatorio : solicita
-    Usuario "1" -- "0..*" Empresa : gerencia
+    Usuario "1" -- "0..*" UsuarioEmpresa : participa
+    Empresa "1" -- "0..*" UsuarioEmpresa : vincula
     Empresa "1" *-- "1..*" Carteira : contém
-    Carteira "1" -- "0..*" Ativo : armazena
+    Carteira "1" -- "0..*" CarteiraAtivo : compõe
+    Ativo "1" -- "0..*" CarteiraAtivo : pertence
     Carteira "1" *-- "0..*" Transacao : registra
-    Transacao "0..*" --> "0..1" Ativo : vincula
+    Transacao "0..*" --> "0..1" Ativo : referencia
 ```
