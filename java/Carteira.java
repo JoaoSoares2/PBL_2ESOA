@@ -9,11 +9,11 @@ public class Carteira {
     private Double saldoTotal;
     private Date dataCriacao;
 
-    private List<Ativo> ativos;
+    private List<CarteiraAtivo> carteiraAtivos;
     private List<Transacao> transacoes;
 
     public Carteira() {
-        this.ativos = new ArrayList<>();
+        this.carteiraAtivos = new ArrayList<>();
         this.transacoes = new ArrayList<>();
         this.dataCriacao = new Date();
         this.saldoTotal = 0.0;
@@ -36,34 +36,34 @@ public class Carteira {
     public Date getDataCriacao() { return dataCriacao; }
     public void setDataCriacao(Date dataCriacao) { this.dataCriacao = dataCriacao; }
 
-    public List<Ativo> getAtivos() { return ativos; }
-    public void setAtivos(List<Ativo> ativos) { this.ativos = ativos; }
+    public List<CarteiraAtivo> getCarteiraAtivos() { return carteiraAtivos; }
+    public void setCarteiraAtivos(List<CarteiraAtivo> carteiraAtivos) { this.carteiraAtivos = carteiraAtivos; }
 
     public List<Transacao> getTransacoes() { return transacoes; }
     public void setTransacoes(List<Transacao> transacoes) { this.transacoes = transacoes; }
 
-    public void adicionarAtivo(Ativo ativo) {
-        this.ativos.add(ativo);
+    public void adicionarAtivo(Ativo ativo, Double quantidade, Double precoMedio) {
+        this.carteiraAtivos.add(new CarteiraAtivo(this, ativo, quantidade, precoMedio));
         calcularSaldo();
     }
 
-    public void adicionarAtivo(String nome, Double valor, Double quantidade) {
-        adicionarAtivo(new AtivoRendaVariavel(nome, valor, quantidade, nome));
+    public void adicionarAtivo(Ativo ativo) {
+        adicionarAtivo(ativo, ativo.getQuantidade(), ativo.getValorAtual());
     }
 
     public void removerAtivo(Ativo ativo) {
-        this.ativos.remove(ativo);
+        this.carteiraAtivos.removeIf(ca -> ca.getAtivo().equals(ativo));
         calcularSaldo();
     }
 
     public void removerAtivo(String nomeAtivo) {
-        this.ativos.removeIf(a -> a.getNome().equalsIgnoreCase(nomeAtivo));
+        this.carteiraAtivos.removeIf(ca -> ca.getAtivo().getNome().equalsIgnoreCase(nomeAtivo));
         calcularSaldo();
     }
 
     public Double calcularSaldo() {
-        this.saldoTotal = ativos.stream()
-                .mapToDouble(Ativo::calcularValorTotal)
+        this.saldoTotal = carteiraAtivos.stream()
+                .mapToDouble(CarteiraAtivo::calcularValorAtual)
                 .sum();
         return this.saldoTotal;
     }
@@ -79,6 +79,6 @@ public class Carteira {
     @Override
     public String toString() {
         return "Carteira{nome='" + nome + "', saldo=R$" + String.format("%.2f", saldoTotal)
-                + ", ativos=" + ativos.size() + "}";
+                + ", ativos=" + carteiraAtivos.size() + "}";
     }
 }
