@@ -1,4 +1,4 @@
-public abstract class Ativo {
+public class Ativo {
 
     private Long id;
     private String nome;

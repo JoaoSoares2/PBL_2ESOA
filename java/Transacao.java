@@ -9,6 +9,7 @@ public class Transacao {
     private Date data;
     private String descricao;
     private Ativo ativo;
+    private Carteira carteira;
 
     public Transacao() {
         this.data = new Date();
@@ -23,6 +24,12 @@ public class Transacao {
     public Transacao(String tipo, Double valor, String descricao) {
         this(tipo, valor);
         this.descricao = descricao;
+    }
+
+    public Transacao(String tipo, Double valor, String descricao, Ativo ativo, Carteira carteira) {
+        this(tipo, valor, descricao);
+        this.ativo = ativo;
+        this.carteira = carteira;
     }
 
     public Long getId() { return id; }
@@ -42,6 +49,9 @@ public class Transacao {
 
     public Ativo getAtivo() { return ativo; }
     public void setAtivo(Ativo ativo) { this.ativo = ativo; }
+
+    public Carteira getCarteira() { return carteira; }
+    public void setCarteira(Carteira carteira) { this.carteira = carteira; }
 
     public Transacao registrarCompra(Double valor) {
         return new Transacao("COMPRA", valor);
