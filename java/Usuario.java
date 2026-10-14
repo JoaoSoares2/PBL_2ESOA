@@ -13,11 +13,11 @@ public class Usuario {
     private Autenticacao autenticacao;
     private PerfilInvestidor perfilInvestidor;
     private List<Relatorio> relatorios;
-    private List<Empresa> empresas;
+    private List<UsuarioEmpresa> vinculosEmpresa;
 
     public Usuario() {
         this.relatorios = new ArrayList<>();
-        this.empresas = new ArrayList<>();
+        this.vinculosEmpresa = new ArrayList<>();
     }
 
     public Usuario(String nome, String email, String senha, String cpf, String telefone) {
@@ -27,7 +27,7 @@ public class Usuario {
         this.cpf = cpf;
         this.telefone = telefone;
         this.relatorios = new ArrayList<>();
-        this.empresas = new ArrayList<>();
+        this.vinculosEmpresa = new ArrayList<>();
     }
 
     public Long getId() { return id; }
@@ -57,8 +57,8 @@ public class Usuario {
     public List<Relatorio> getRelatorios() { return relatorios; }
     public void setRelatorios(List<Relatorio> relatorios) { this.relatorios = relatorios; }
 
-    public List<Empresa> getEmpresas() { return empresas; }
-    public void setEmpresas(List<Empresa> empresas) { this.empresas = empresas; }
+    public List<UsuarioEmpresa> getVinculosEmpresa() { return vinculosEmpresa; }
+    public void setVinculosEmpresa(List<UsuarioEmpresa> vinculosEmpresa) { this.vinculosEmpresa = vinculosEmpresa; }
 
     public void cadastrar() {}
 
@@ -75,8 +75,13 @@ public class Usuario {
         this.telefone = telefone;
     }
 
+    public void vincularEmpresa(Empresa empresa, String cargo) {
+        this.vinculosEmpresa.add(new UsuarioEmpresa(this, empresa, cargo));
+    }
+
     public List<Carteira> vizualizarCarteira() {
-        return empresas.stream()
+        return vinculosEmpresa.stream()
+                .map(UsuarioEmpresa::getEmpresa)
                 .flatMap(empresa -> empresa.listarCarteiras().stream())
                 .toList();
     }

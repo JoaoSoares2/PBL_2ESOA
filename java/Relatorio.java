@@ -1,17 +1,28 @@
 import java.util.Date;
 
-public abstract class Relatorio {
+public class Relatorio {
 
     private Long id;
     private String tipo;
     private Date dataGeracao;
     private String conteudo;
+    private Usuario usuario;
 
     public Relatorio() {}
 
     public Relatorio(String tipo) {
         this.tipo = tipo;
         this.dataGeracao = new Date();
+    }
+
+    public Relatorio(String tipo, Usuario usuario) {
+        this(tipo);
+        this.usuario = usuario;
+    }
+
+    public Relatorio(String tipo, String conteudo, Usuario usuario) {
+        this(tipo, usuario);
+        this.conteudo = conteudo;
     }
 
     public Long getId() { return id; }
@@ -25,6 +36,9 @@ public abstract class Relatorio {
 
     public String getConteudo() { return conteudo; }
     public void setConteudo(String conteudo) { this.conteudo = conteudo; }
+
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
 
     public void gerarRelatorio() {
         this.dataGeracao = new Date();
